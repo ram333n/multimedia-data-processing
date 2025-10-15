@@ -5,7 +5,9 @@ from ultralytics import YOLO
 import cv2
 
 COCO_LABELS_BY_ID = {
-    2: "car"
+    0: "person",
+    2: "car",
+    67: "cell phone"
 }
 OCR_READER = easyocr.Reader(["en"], verbose=False, gpu=True)
 
@@ -43,10 +45,10 @@ def detect_car_plates(car_plate_detector, image, conf_threshold=0.5):
         car_plate_roi = image[int(y1):int(y2), int(x1):int(x2)]
 
         gray_roi = cv2.cvtColor(car_plate_roi, cv2.COLOR_BGR2GRAY)
-        gray_roi = cv2.bilateralFilter(gray_roi, 11, 17, 17)
+        gray_roi = cv2.bilateralFilter(gray_roi, 9, 17, 17)
         _, thresh = cv2.threshold(gray_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-        results = OCR_READER.readtext(car_plate_roi, detail=1)
+        results = OCR_READER.readtext(thresh, detail=1)
 
         for (box, text, conf) in results:
             result.append({
@@ -77,7 +79,7 @@ if __name__ == "__main__":
     coco_detector = YOLO(os.path.join(".", "models", "yolov8n.pt"))
     car_plate_detector = YOLO(os.path.join(".", "models", "license_plate_detector.pt"))
 
-    video_path = os.path.join(".", "input", "input_video_2.mp4")
+    video_path = os.path.join(".", "input", "input_video_3.mp4")
     video_capture = cv2.VideoCapture(video_path)
 
     if not video_capture.isOpened():
