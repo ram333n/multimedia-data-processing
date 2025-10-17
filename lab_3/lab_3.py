@@ -48,7 +48,7 @@ def detect_car_plates(car_plate_detector, image, conf_threshold=0.5):
         gray_roi = cv2.bilateralFilter(gray_roi, 9, 17, 17)
         _, thresh = cv2.threshold(gray_roi, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-        results = OCR_READER.readtext(thresh, detail=1)
+        results = OCR_READER.readtext(thresh, detail=1, allowlist="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
 
         for (box, text, conf) in results:
             result.append({
